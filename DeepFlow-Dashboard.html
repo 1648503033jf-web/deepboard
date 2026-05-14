@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DeepFlow Dashboard 智能可观测平台宣传演示</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&family=DM+Sans:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+    --bg: #0f1419;
+    --bg-soft: #1a2332;
+    --paper: #f4f7fa;
+    --paper-deep: #e8eef5;
+    --ink: #1a2332;
+    --muted: #5a6b7a;
+    --line: rgba(26, 35, 50, 0.12);
+    --flow: #00b4d8;
+    --trace: #e85d04;
+    --topo: #7b2cbf;
+    --ai: #06d6a0;
+    --alert: #ef476f;
+    --ok: #06d6a0;
+    --shadow: rgba(0, 0, 0, 0.35);
+    --pad: clamp(1.2rem, 3vw, 3rem);
+    --gap: clamp(0.7rem, 1.7vw, 1.5rem);
+    --title: clamp(2rem, 5vw, 4.8rem);
+    --h2: clamp(1.5rem, 3.5vw, 3.1rem);
+    --h3: clamp(1rem, 1.9vw, 1.45rem);
+    --body: clamp(0.82rem, 1.28vw, 1.05rem);
+    --small: clamp(0.68rem, 0.95vw, 0.86rem);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+body {
+    overflow-x: hidden;
+    background:
+        linear-gradient(135deg, rgba(0, 180, 216, 0.12), transparent 34%),
+        linear-gradient(315deg, rgba(123, 44, 191, 0.12), transparent 34%),
+        var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans SC", "DM Sans", system-ui, sans-serif;
+}
+
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+}
+
+.paper {
+    width: min(94vw, 1480px);
+    height: min(91vh, 900px);
+    margin: auto;
+    padding: var(--pad);
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, rgba(26, 35, 50, 0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(26, 35, 50, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, #f9fbfd 0%, var(--paper) 100%);
+    background-size: 26px 26px, 26px 26px, 100% 100%;
+    box-shadow: 0 24px 70px var(--shadow), 0 8px 24px rgba(0, 0, 0, 0.24);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.paper::before {
+    content: "";
+    position: absolute;
+    inset: 0.75rem;
+    border: 1px solid rgba(26, 35, 50, 0.06);
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+.topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: clamp(0.5rem, 1.2vh, 1rem);
+    color: var(--muted);
+    font-size: var(--small);
+    position: relative;
+    z-index: 1;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+.brand-mark {
+    width: clamp(1.7rem, 2.8vw, 2.4rem);
+    height: clamp(1.7rem, 2.8vw, 2.4rem);
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, var(--flow), var(--topo) 55%, var(--ai));
+    color: white;
+    display: grid;
+    place-items: center;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 900;
+    font-size: 0.85rem;
+}
+
+.kicker {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--gap);
+    position: relative;
+    z-index: 1;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: var(--small);
+    border-top: 1px solid var(--line);
+    padding-top: clamp(0.55rem, 1.2vh, 0.9rem);
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2, h3, p { margin: 0; }
+.title {
+    font-family: "Noto Serif SC", serif;
+    font-weight: 900;
+    font-size: var(--title);
+    line-height: 1.08;
+    letter-spacing: 0;
+}
+
+.slide-title {
+    font-family: "Noto Serif SC", serif;
+    font-weight: 900;
+    font-size: var(--h2);
+    line-height: 1.12;
+    letter-spacing: 0;
+}
+
+.slide-title em, .title em {
+    color: var(--flow);
+    font-style: normal;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.55vw, 1.28rem);
+    line-height: 1.7;
+    max-width: 920px;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.72rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    font-size: var(--small);
+    font-weight: 700;
+}
+
+.dot {
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.flow { color: var(--flow); }
+.trace { color: var(--trace); }
+.topo { color: var(--topo); }
+.ai { color: var(--ai); }
+.alert { color: var(--alert); }
+.ok { color: var(--ok); }
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--gap);
+    align-items: stretch;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.7rem, 1.4vw, 1.1rem);
+}
+
+.panel, .metric, .story-card, .route-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 8px 20px rgba(26, 35, 50, 0.06);
+}
+
+.panel {
+    padding: clamp(0.85rem, 1.8vw, 1.45rem);
+}
+
+.panel h3, .story-card h3, .route-card h3 {
+    font-size: var(--h3);
+    line-height: 1.35;
+    margin-bottom: 0.55rem;
+}
+
+.panel p, .story-card p, .route-card p {
+    color: var(--muted);
+    font-size: var(--body);
+    line-height: 1.65;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.55rem, 1.1vh, 0.85rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.list li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.7rem;
+    align-items: start;
+    color: var(--ink);
+    font-size: var(--body);
+    line-height: 1.55;
+}
+
+.num, .check {
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: white;
+    background: var(--ink);
+}
+
+.check { background: var(--ok); }
+
+.hero-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(1rem, 3vw, 2.6rem);
+    align-items: center;
+}
+
+.dashboard-mock {
+    min-height: clamp(320px, 55vh, 520px);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #141e2b;
+    color: #edf3f7;
+    padding: clamp(0.9rem, 1.8vw, 1.4rem);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 0.9rem;
+}
+
+.mock-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--small);
+    color: rgba(237, 243, 247, 0.74);
+}
+
+.mock-tabs, .mock-kpis {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.mock-tabs {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.mock-pill {
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.45rem 0.55rem;
+    text-align: center;
+    font-size: var(--small);
+    color: rgba(237, 243, 247, 0.82);
+}
+
+.mock-pill.active { background: rgba(0, 180, 216, 0.26); color: white; border-color: rgba(0, 180, 216, 0.6); }
+
+.mock-kpis {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.mock-kpi {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    padding: 0.75rem;
+}
+
+.mock-kpi strong {
+    display: block;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    line-height: 1;
+}
+
+.mock-kpi span {
+    display: block;
+    margin-top: 0.35rem;
+    color: rgba(237, 243, 247, 0.65);
+    font-size: var(--small);
+}
+
+.mock-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    min-height: 0;
+}
+
+.mock-chart, .mock-terminal {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    padding: 0.8rem;
+    overflow: hidden;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 4rem 1fr 2.5rem;
+    gap: 0.55rem;
+    align-items: center;
+    margin: 0.6rem 0;
+    font-size: var(--small);
+    color: rgba(237, 243, 247, 0.76);
+}
+
+.bar {
+    height: 0.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+}
+
+.bar i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--flow), var(--topo));
+}
+
+.mock-terminal {
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--small);
+    color: rgba(237, 243, 247, 0.78);
+    line-height: 1.7;
+}
+
+.flow-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    align-items: stretch;
+}
+
+.flow-step {
+    border-radius: 8px;
+    padding: clamp(0.85rem, 1.6vw, 1.3rem);
+    background: rgba(255, 255, 255, 0.52);
+    border: 1px solid var(--line);
+    position: relative;
+    min-height: clamp(135px, 21vh, 190px);
+}
+
+.flow-step::after {
+    content: "›";
+    position: absolute;
+    right: -0.68rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    font-size: 1.4rem;
+}
+
+.flow-step:last-child::after { content: ""; }
+.flow-step b {
+    display: block;
+    font-size: var(--h3);
+    margin-bottom: 0.45rem;
+}
+.flow-step span {
+    color: var(--muted);
+    font-size: var(--body);
+    line-height: 1.6;
+}
+
+.feature-matrix {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--gap);
+}
+
+.route-card {
+    padding: clamp(0.85rem, 1.7vw, 1.2rem);
+}
+
+.route {
+    display: block;
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.64rem, 0.9vw, 0.78rem);
+    line-height: 1.6;
+    word-break: break-all;
+}
+
+.topology {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    align-items: center;
+}
+
+.node {
+    min-height: clamp(110px, 18vh, 160px);
+    border-radius: 8px;
+    border: 2px solid currentColor;
+    background: rgba(255, 255, 255, 0.56);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.node strong { font-size: var(--h3); }
+.node span { color: var(--muted); font-size: var(--body); line-height: 1.5; }
+
+.callout {
+    padding: clamp(0.85rem, 1.7vw, 1.3rem);
+    border-left: 6px solid var(--flow);
+    background: rgba(0, 180, 216, 0.08);
+    border-radius: 8px;
+    font-size: clamp(0.95rem, 1.5vw, 1.18rem);
+    line-height: 1.7;
+    color: var(--ink);
+}
+
+.scenario {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+    align-items: stretch;
+}
+
+.story-card {
+    padding: clamp(0.9rem, 2vw, 1.45rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.story-card .label {
+    display: inline-flex;
+    align-self: flex-start;
+    border-radius: 999px;
+    padding: 0.28rem 0.65rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: var(--small);
+    color: white;
+    background: var(--ink);
+}
+
+.value-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.metric {
+    padding: clamp(0.85rem, 1.8vw, 1.3rem);
+    min-height: clamp(125px, 20vh, 175px);
+}
+
+.metric strong {
+    display: block;
+    font-size: clamp(1.8rem, 4vw, 3.4rem);
+    line-height: 1;
+    font-family: "DM Sans", sans-serif;
+}
+
+.metric span {
+    display: block;
+    color: var(--muted);
+    margin-top: 0.6rem;
+    font-size: var(--body);
+    line-height: 1.5;
+}
+
+.quote {
+    max-width: 1050px;
+    margin: 0 auto;
+    text-align: center;
+    font-family: "Noto Serif SC", serif;
+    font-weight: 900;
+    font-size: clamp(1.7rem, 4vw, 4rem);
+    line-height: 1.25;
+}
+
+.quote em { color: var(--flow); font-style: normal; }
+
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(90deg, var(--flow), var(--topo), var(--ai));
+    z-index: 100;
+    transition: width 0.25s var(--ease);
+}
+
+.nav-dots {
+    position: fixed;
+    right: clamp(0.55rem, 1.2vw, 1rem);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+}
+
+.nav-dot {
+    width: 0.58rem;
+    height: 0.58rem;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background: rgba(244, 247, 250, 0.32);
+    cursor: pointer;
+}
+
+.nav-dot.active { background: var(--paper); transform: scale(1.35); }
+
+.keyboard-hint {
+    position: fixed;
+    left: clamp(0.65rem, 1.4vw, 1.1rem);
+    bottom: clamp(0.55rem, 1.2vh, 0.9rem);
+    z-index: 80;
+    color: rgba(244, 247, 250, 0.52);
+    font-size: var(--small);
+    font-family: "JetBrains Mono", monospace;
+}
+
+.edit-toggle {
+    position: fixed;
+    left: clamp(0.65rem, 1.4vw, 1.1rem);
+    top: clamp(0.7rem, 1.5vh, 1.1rem);
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    border: 1px solid rgba(244, 247, 250, 0.7);
+    background: rgba(244, 247, 250, 0.92);
+    color: var(--ink);
+    z-index: 120;
+    cursor: pointer;
+    opacity: 0.16;
+    transition: opacity 0.25s, transform 0.25s;
+    font-weight: 900;
+}
+
+.edit-toggle:hover, .edit-toggle.active { opacity: 1; transform: scale(1.05); }
+.edit-toggle.active { background: var(--topo); color: white; }
+
+body.editing [data-editable="true"] {
+    outline: 1px dashed var(--topo);
+    outline-offset: 3px;
+    background: rgba(123, 44, 191, 0.06);
+    cursor: text;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
+}
+
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .d1 { transition-delay: 0.08s; }
+.slide.visible .d2 { transition-delay: 0.18s; }
+.slide.visible .d3 { transition-delay: 0.28s; }
+.slide.visible .d4 { transition-delay: 0.38s; }
+.slide.visible .d5 { transition-delay: 0.48s; }
+.slide.visible .d6 { transition-delay: 0.58s; }
+
+@media (max-width: 900px) {
+    .hero-layout, .grid-2, .feature-matrix, .scenario { grid-template-columns: 1fr; }
+    .grid-3, .grid-4, .flow-steps, .value-strip, .topology { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mock-main { grid-template-columns: 1fr; }
+    .paper { height: min(94vh, 920px); }
+}
+
+@media (max-width: 640px), (max-height: 620px) {
+    :root { --pad: 1rem; --gap: 0.65rem; }
+    .nav-dots, .keyboard-hint { display: none; }
+    .grid-3, .grid-4, .flow-steps, .value-strip, .topology { grid-template-columns: 1fr; }
+    .flow-step::after { content: ""; }
+    .paper { overflow: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+@media print {
+    html, body { background: white; scroll-snap-type: none; }
+    .slide { height: 100vh; page-break-after: always; }
+    .progress-bar, .nav-dots, .keyboard-hint, .edit-toggle { display: none !important; }
+    .paper { width: 100vw; height: 100vh; box-shadow: none; border-radius: 0; }
+}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<button class="edit-toggle" id="editToggle" title="编辑模式">E</button>
+<div class="keyboard-hint">← → 翻页 · E 编辑 · Ctrl+S 导出 HTML · 打印可另存 PDF</div>
+
+<!-- Slide 1: Hero -->
+<section class="slide" data-slide="1">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Observability Platform</div></div>
+        <div class="content hero-layout">
+            <div>
+                <div class="tag-row reveal d1">
+                    <span class="tag flow"><i class="dot"></i>eBPF 采集</span>
+                    <span class="tag trace"><i class="dot"></i>全链路追踪</span>
+                    <span class="tag topo"><i class="dot"></i>服务拓扑</span>
+                    <span class="tag ai"><i class="dot"></i>AI 诊断</span>
+                </div>
+                <h1 class="title reveal d2" data-editable="true">DeepFlow<br><em>智能可观测平台</em></h1>
+                <p class="subtitle reveal d3" data-editable="true">基于 eBPF 零侵入采集，融合网络流量、调用链、服务拓扑与 AI 分析，让可观测性从"看指标"升级为"懂系统"。</p>
+            </div>
+            <div class="dashboard-mock reveal d4">
+                <div class="mock-top"><span>DeepFlow Observability Center</span><span>LIVE</span></div>
+                <div class="mock-tabs">
+                    <div class="mock-pill active">拓扑</div><div class="mock-pill">追踪</div><div class="mock-pill">告警</div><div class="mock-pill">AI</div>
+                </div>
+                <div class="mock-kpis">
+                    <div class="mock-kpi"><strong>326</strong><span>活跃服务</span></div>
+                    <div class="mock-kpi"><strong>99.7%</strong><span>服务可用率</span></div>
+                    <div class="mock-kpi"><strong>8ms</strong><span>P99 延迟</span></div>
+                </div>
+                <div class="mock-main">
+                    <div class="mock-chart">
+                        <div class="bar-row"><span>HTTP</span><div class="bar"><i style="width: 82%"></i></div><span>82%</span></div>
+                        <div class="bar-row"><span>gRPC</span><div class="bar"><i style="width: 61%"></i></div><span>61%</span></div>
+                        <div class="bar-row"><span>DNS</span><div class="bar"><i style="width: 45%"></i></div><span>45%</span></div>
+                        <div class="bar-row"><span>TCP</span><div class="bar"><i style="width: 73%"></i></div><span>73%</span></div>
+                    </div>
+                    <div class="mock-terminal">
+                        <div>&gt; "gssdk 命名空间延迟异常"</div>
+                        <div>查询 DeepFlow flow_metrics...</div>
+                        <div>发现 3 个服务 P99 &gt; 200ms</div>
+                        <div>关联 Trace 定位根因节点</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer"><span>eBPF + AI · 零侵入全栈可观测</span><span>01 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 2: Why Now -->
+<section class="slide" data-slide="2">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Why Now</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">微服务时代的核心挑战：<em>看不清、查不到、定不准</em></h2>
+            <div class="grid-4">
+                <div class="panel reveal d2"><h3>看不清</h3><p data-editable="true">服务数量爆炸，调用关系复杂，人工维护拓扑图永远滞后于实际部署。</p></div>
+                <div class="panel reveal d3"><h3>查不到</h3><p data-editable="true">传统 APM 需要埋点，未覆盖的服务成为可观测盲区，网络层问题更难追踪。</p></div>
+                <div class="panel reveal d4"><h3>定不准</h3><p data-editable="true">告警只告诉"哪里红了"，从告警到根因需要跨多个系统拼凑证据。</p></div>
+                <div class="panel reveal d5"><h3>改不动</h3><p data-editable="true">接入可观测需要改代码、加 SDK，业务团队抵触，覆盖率始终上不去。</p></div>
+            </div>
+            <div class="callout reveal d6" data-editable="true">DeepFlow Dashboard 的定位：用 eBPF 零侵入采集解决覆盖率问题，用 AI 解决从数据到结论的效率问题，让可观测性真正服务于故障定位。</div>
+        </div>
+        <div class="footer"><span>从"有数据"到"能定位"</span><span>02 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 3: Product Map -->
+<section class="slide" data-slide="3">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Product Map</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">DeepFlow = <em>采集 + 拓扑 + 追踪 + AI</em></h2>
+            <div class="flow-steps">
+                <div class="flow-step reveal d2"><b class="flow">01 采集</b><span data-editable="true">eBPF 零侵入抓取网络流量、应用协议、系统调用，覆盖 L4-L7 全栈。</span></div>
+                <div class="flow-step reveal d3"><b class="topo">02 拓扑</b><span data-editable="true">自动发现服务调用关系，实时绘制 Universal Map，无需手动配置。</span></div>
+                <div class="flow-step reveal d4"><b class="trace">03 追踪</b><span data-editable="true">全链路 Trace，瀑布图 + 火焰图，关联 K8s 资源和网络信息。</span></div>
+                <div class="flow-step reveal d5"><b class="ai">04 AI</b><span data-editable="true">自然语言查询、智能根因分析、自动诊断报告、预测告警。</span></div>
+            </div>
+            <p class="subtitle reveal d6" data-editable="true">四层能力形成闭环：eBPF 保证数据全面，拓扑提供全局视角，追踪定位具体链路，AI 给出诊断结论。</p>
+        </div>
+        <div class="footer"><span>从数据采集到智能诊断的完整链路</span><span>03 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 4: eBPF -->
+<section class="slide" data-slide="4">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">eBPF</div></div>
+        <div class="content feature-matrix">
+            <div>
+                <h2 class="slide-title reveal d1" data-editable="true">零侵入采集：<em>不改一行业务代码</em></h2>
+                <p class="subtitle reveal d2" data-editable="true">基于 eBPF 技术在内核层采集网络流量和系统调用，无需 SDK 埋点、无需 Sidecar 注入，部署即覆盖全部服务。</p>
+            </div>
+            <div class="grid-2">
+                <div class="route-card reveal d3"><h3>协议解析</h3><p data-editable="true">自动识别 HTTP/gRPC/DNS/MySQL/Redis/Kafka 等协议，提取请求响应详情。</p><code class="route">/flowlog · L4/L7 流日志</code></div>
+                <div class="route-card reveal d4"><h3>网络指标</h3><p data-editable="true">TCP 重传、RTT、连接数、流量带宽，精确到 Pod 和进程粒度。</p><code class="route">/deepflow-host · 主机网络监控</code></div>
+                <div class="route-card reveal d5"><h3>K8s 感知</h3><p data-editable="true">自动关联 Pod、Deployment、Namespace、Node，无需额外标签注入。</p><code class="route">/universal-map · 按集群/命名空间筛选</code></div>
+                <div class="route-card reveal d6"><h3>多数据源融合</h3><p data-editable="true">DeepFlow 网络数据 + 腾讯云 CLS 日志 + Prometheus 指标，统一查询。</p><code class="route">/query · SQL 编辑器直查</code></div>
+            </div>
+        </div>
+        <div class="footer"><span>eBPF 让可观测覆盖率从"能埋多少"变成"默认全覆盖"</span><span>04 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 5: Universal Map -->
+<section class="slide" data-slide="5">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Universal Map</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">服务拓扑：<em>自动发现，实时呈现</em></h2>
+            <div class="topology">
+                <div class="node flow reveal d2"><strong>网络层</strong><span data-editable="true">TCP/UDP 连接、流量方向、RTT、重传率</span></div>
+                <div class="node topo reveal d3"><strong>应用层</strong><span data-editable="true">HTTP/gRPC 调用、请求量、延迟、错误率</span></div>
+                <div class="node ai reveal d4"><strong>业务层</strong><span data-editable="true">服务名、命名空间、健康评分、SLO 状态</span></div>
+            </div>
+            <div class="callout reveal d5" data-editable="true">Universal Map 不是静态架构图，而是实时流量拓扑：节点大小反映请求量，连线颜色反映健康状态，点击即可下钻到具体 Trace 和指标。</div>
+            <ul class="list reveal d6">
+                <li><span class="check">✓</span><span data-editable="true">自动发现新服务和新调用关系，无需人工维护拓扑配置。</span></li>
+                <li><span class="check">✓</span><span data-editable="true">支持按命名空间、集群、时间范围筛选，快速聚焦问题区域。</span></li>
+            </ul>
+        </div>
+        <div class="footer"><span>从"画架构图"到"看实时流量"</span><span>05 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 6: Trace -->
+<section class="slide" data-slide="6">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Distributed Tracing</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">全链路追踪：<em>从入口到根因一条线</em></h2>
+            <div class="grid-3">
+                <div class="panel reveal d2"><h3>瀑布图 + 火焰图</h3><p data-editable="true">双视图切换，瀑布图看时序关系，火焰图看耗时分布，快速定位慢 Span。</p><code class="route">/trace · Trace 列表与详情</code></div>
+                <div class="panel reveal d3"><h3>K8s 资源关联</h3><p data-editable="true">每个 Span 自动关联 Pod、Node、Deployment 信息和网络层指标。</p><code class="route">Span 详情 · 网络信息面板</code></div>
+                <div class="panel reveal d4"><h3>日志关联</h3><p data-editable="true">通过 Trace ID 关联 DeepFlow 系统日志和腾讯云 CLS 业务日志。</p><code class="route">关联日志 · CLS 业务日志</code></div>
+            </div>
+            <ul class="list reveal d5">
+                <li><span class="check">✓</span><span data-editable="true">eBPF 采集无需埋点，自动生成 Trace，覆盖所有经过网络的调用。</span></li>
+                <li><span class="check">✓</span><span data-editable="true">网络层 Span 补全应用层盲区：DNS 解析、TCP 握手、TLS 协商都可追踪。</span></li>
+            </ul>
+        </div>
+        <div class="footer"><span>追踪不只是应用层，网络层同样可见</span><span>06 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 7: AI -->
+<section class="slide" data-slide="7">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">AI-Powered</div></div>
+        <div class="content feature-matrix">
+            <div>
+                <h2 class="slide-title reveal d1" data-editable="true">AI 分析：<em>从数据到结论的加速器</em></h2>
+                <p class="subtitle reveal d2" data-editable="true">集成 DashScope 大模型，支持自然语言查询、智能根因分析、异常检测和自动化报告，让运维从"翻数据"变成"问系统"。</p>
+            </div>
+            <div class="grid-2">
+                <div class="route-card reveal d3"><h3>自然语言查询</h3><p data-editable="true">用中文描述需求，AI 自动生成 DeepFlow SQL 或路由到 CLS 查询。</p><code class="route">/ai/nl-query · 智能路由</code></div>
+                <div class="route-card reveal d4"><h3>根因分析</h3><p data-editable="true">对异常事件自动关联拓扑、Trace、指标，输出根因假设和证据链。</p><code class="route">/ai/root-cause · 证据驱动</code></div>
+                <div class="route-card reveal d5"><h3>异常检测</h3><p data-editable="true">动态基线 + AI 优化阈值，自动识别偏离正常模式的指标变化。</p><code class="route">/ai/anomaly · 基线告警</code></div>
+                <div class="route-card reveal d6"><h3>日报/周报</h3><p data-editable="true">AI 自动生成运维分析报告，覆盖流量概况、异常事件、优化建议。</p><code class="route">/ai/daily-report · 定时推送</code></div>
+            </div>
+        </div>
+        <div class="footer"><span>AI 不替代判断，而是加速从数据到结论</span><span>07 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 8: Alert Pipeline -->
+<section class="slide" data-slide="8">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Alert Pipeline</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">统一告警管线：<em>去重、关联、诊断一条流水线</em></h2>
+            <div class="grid-4">
+                <div class="panel reveal d2"><h3>多源接入</h3><p data-editable="true">阈值告警、SLO Burn Rate、动态基线、外部 AlertManager/Zabbix/PagerDuty。</p></div>
+                <div class="panel reveal d3"><h3>智能去重</h3><p data-editable="true">AlertDeduplicator 自动合并重复告警，5 分钟窗口避免告警风暴。</p></div>
+                <div class="panel reveal d4"><h3>事件关联</h3><p data-editable="true">IncidentCorrelator 将相关告警聚合为事件，识别共同根因。</p></div>
+                <div class="panel reveal d5"><h3>AI 分析</h3><p data-editable="true">AIOpsDispatcher 自动触发诊断，输出根因报告和修复建议。</p></div>
+            </div>
+            <div class="callout reveal d6" data-editable="true">告警不再是孤立的红点。每条告警经过去重→关联→AI 分析的完整管线，最终输出的是可行动的诊断结论，而不是需要人工拼凑的碎片信息。</div>
+        </div>
+        <div class="footer"><span>从"告警轰炸"到"事件驱动诊断"</span><span>08 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 9: Fault Diagnosis -->
+<section class="slide" data-slide="9">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Fault Diagnosis</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">自动化故障定位：<em>从告警到报告全自动</em></h2>
+            <div class="flow-steps">
+                <div class="flow-step reveal d2"><b class="alert">告警触发</b><span data-editable="true">告警进入管线，自动创建诊断会话，匹配业务线。</span></div>
+                <div class="flow-step reveal d3"><b class="topo">技能匹配</b><span data-editable="true">根据告警信息自动匹配诊断技能：DeepFlow 查询、日志分析、知识库。</span></div>
+                <div class="flow-step reveal d4"><b class="flow">数据采集</b><span data-editable="true">执行 DeepFlow SQL、查询 CLS 日志、搜索知识库，收集证据。</span></div>
+                <div class="flow-step reveal d5"><b class="ai">AI 诊断</b><span data-editable="true">大模型分析证据，输出根因假设、影响范围、修复建议。</span></div>
+            </div>
+            <div class="callout reveal d6" data-editable="true">诊断会话完整记录每一步：pending → skill_matching → running → completed，支持回看、对比和反馈，让诊断经验可沉淀。</div>
+        </div>
+        <div class="footer"><span>/fault-diagnosis · 会话式自动诊断</span><span>09 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 10: Scenario -->
+<section class="slide" data-slide="10">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Scenario</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">典型场景：<em>服务延迟突增告警</em></h2>
+            <div class="scenario">
+                <div class="story-card reveal d2">
+                    <span class="label">Before</span>
+                    <h3>传统排障路径</h3>
+                    <ul class="list">
+                        <li><span class="num">1</span><span data-editable="true">收到告警，打开 Grafana 看指标趋势。</span></li>
+                        <li><span class="num">2</span><span data-editable="true">猜测上下游，手动查 Trace 和日志。</span></li>
+                        <li><span class="num">3</span><span data-editable="true">发现网络层问题，再切到网络监控工具。</span></li>
+                        <li><span class="num">4</span><span data-editable="true">拼凑证据写结论，耗时 30-60 分钟。</span></li>
+                    </ul>
+                </div>
+                <div class="story-card reveal d3">
+                    <span class="label" style="background: var(--ai);">After</span>
+                    <h3>DeepFlow 处理路径</h3>
+                    <ul class="list">
+                        <li><span class="check">✓</span><span data-editable="true">告警自动触发诊断，AI 查询拓扑、Trace、网络指标。</span></li>
+                        <li><span class="check">✓</span><span data-editable="true">eBPF 数据覆盖应用层+网络层，无盲区。</span></li>
+                        <li><span class="check">✓</span><span data-editable="true">自动关联变更事件，定位因 Deployment 更新导致的延迟。</span></li>
+                        <li><span class="check">✓</span><span data-editable="true">5 分钟内输出完整诊断报告，可回看可分享。</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer"><span>从"人工拼证据"到"AI 出报告"</span><span>10 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 11: SLO & Operations -->
+<section class="slide" data-slide="11">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">SLO & Operations</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">运维管理：<em>从被动响应到主动治理</em></h2>
+            <div class="grid-3">
+                <div class="panel reveal d2"><h3>SLO 管理</h3><p data-editable="true">定义可用性、延迟、错误率目标，自动计算 Error Budget 和 Burn Rate，提前预警。</p><code class="route">/slo · 滚动窗口 + 日历月</code></div>
+                <div class="panel reveal d3"><h3>健康评分</h3><p data-editable="true">多维度量化服务健康：可用性、延迟、错误率、吞吐量，0-100 综合评分。</p><code class="route">/health-scorecard · 历史趋势</code></div>
+                <div class="panel reveal d4"><h3>变更关联</h3><p data-editable="true">自动采集 K8s 变更事件，时间轴关联性能指标异常，快速定位变更影响。</p><code class="route">/change-correlation · 时间轴</code></div>
+            </div>
+            <div class="dashboard-mock reveal d5" style="min-height: 220px;">
+                <div class="mock-top"><span>SLO Dashboard</span><span>Error Budget Remaining</span></div>
+                <div class="mock-main" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="mock-kpi"><strong>99.9%</strong><span>可用性目标</span></div>
+                    <div class="mock-kpi"><strong>72%</strong><span>Budget 剩余</span></div>
+                    <div class="mock-kpi"><strong>0.8x</strong><span>Burn Rate</span></div>
+                    <div class="mock-kpi"><strong>92</strong><span>健康评分</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer"><span>用 SLO 驱动运维决策，而不是靠感觉</span><span>11 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 12: Integration & A2A -->
+<section class="slide" data-slide="12">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Integration</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">开放集成：<em>A2A 协议 + 外部告警 + 工作流</em></h2>
+            <div class="grid-3">
+                <div class="panel reveal d2"><h3>A2A 远程 Agent</h3><p data-editable="true">实现 Google A2A 协议，外部 AIOps 平台可远程调用故障定位、拓扑查询、SQL 执行等能力。</p><code class="route">/.well-known/agent.json</code></div>
+                <div class="panel reveal d3"><h3>外部告警接入</h3><p data-editable="true">支持 AlertManager、Zabbix、PagerDuty、自定义 Webhook，统一进入告警管线处理。</p><code class="route">/api/v1/alerts/ingest/:sourceType</code></div>
+                <div class="panel reveal d4"><h3>工作流编排</h3><p data-editable="true">可视化编排自动化运维流程：告警触发→查询→诊断→通知→审批→执行。</p><code class="route">/workflow-automation</code></div>
+            </div>
+            <ul class="list reveal d5">
+                <li><span class="check">✓</span><span data-editable="true">A2A 支持结构化参数和自然语言调用，Bearer Token 认证，SSE 流式响应。</span></li>
+                <li><span class="check">✓</span><span data-editable="true">通知渠道覆盖企业微信、钉钉、飞书和自定义 Webhook。</span></li>
+            </ul>
+        </div>
+        <div class="footer"><span>不是孤岛，而是可观测能力的开放平台</span><span>12 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 13: Value -->
+<section class="slide" data-slide="13">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Value</div></div>
+        <div class="content">
+            <h2 class="slide-title reveal d1" data-editable="true">DeepFlow Dashboard 带来的改变</h2>
+            <div class="value-strip">
+                <div class="metric reveal d2"><strong class="flow">零侵入</strong><span data-editable="true">eBPF 内核采集，无需改代码、无需 SDK，部署即覆盖。</span></div>
+                <div class="metric reveal d3"><strong class="topo">全视角</strong><span data-editable="true">网络层到应用层全栈可观测，拓扑自动发现，无盲区。</span></div>
+                <div class="metric reveal d4"><strong class="trace">快定位</strong><span data-editable="true">告警→诊断→报告全自动，MTTR 从小时级降到分钟级。</span></div>
+                <div class="metric reveal d5"><strong class="ai">会学习</strong><span data-editable="true">RAG 知识库沉淀经验，AI 诊断越用越准，团队经验不丢失。</span></div>
+            </div>
+            <p class="subtitle reveal d6" data-editable="true">最终效果：覆盖率不再依赖埋点，故障定位不再依赖个人经验，运维质量可量化、可追踪、可改进。</p>
+        </div>
+        <div class="footer"><span>从工具集合升级为智能可观测平台</span><span>13 / 14</span></div>
+    </div>
+</section>
+
+<!-- Slide 14: Close -->
+<section class="slide" data-slide="14">
+    <div class="paper">
+        <div class="topline"><div class="brand"><div class="brand-mark">DF</div>DeepFlow</div><div class="kicker">Close</div></div>
+        <div class="content">
+            <p class="quote reveal d1" data-editable="true">DeepFlow 让可观测从<em>"埋点看数据"</em><br>升级为<em>"零侵入、全覆盖、AI 诊断"</em></p>
+            <div class="tag-row reveal d2" style="justify-content: center;">
+                <span class="tag flow"><i class="dot"></i>eBPF 零侵入</span>
+                <span class="tag topo"><i class="dot"></i>服务拓扑</span>
+                <span class="tag trace"><i class="dot"></i>全链路追踪</span>
+                <span class="tag ai"><i class="dot"></i>AI 智能诊断</span>
+                <span class="tag alert"><i class="dot"></i>统一告警</span>
+            </div>
+            <p class="subtitle reveal d3" style="text-align: center; margin: 0 auto;" data-editable="true">一个面向云原生时代的智能可观测平台。</p>
+        </div>
+        <div class="footer"><span>DeepFlow Dashboard · 智能可观测平台</span><span>14 / 14</span></div>
+    </div>
+</section>
+
+<script>
+class DeepFlowDeck {
+    constructor() {
+        this.slides = Array.from(document.querySelectorAll(".slide"));
+        this.current = 0;
+        this.progress = document.getElementById("progressBar");
+        this.navDots = document.getElementById("navDots");
+        this.setupDots();
+        this.setupObserver();
+        this.setupKeyboard();
+        this.setupTouch();
+        this.update(0);
+    }
+
+    setupDots() {
+        this.navDots.innerHTML = "";
+        this.slides.forEach((_, index) => {
+            const dot = document.createElement("button");
+            dot.className = "nav-dot";
+            dot.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+            dot.addEventListener("click", () => this.go(index));
+            this.navDots.appendChild(dot);
+        });
+    }
+
+    setupObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                    const index = this.slides.indexOf(entry.target);
+                    entry.target.classList.add("visible");
+                    if (index >= 0) this.update(index);
+                }
+            });
+        }, { threshold: [0.5] });
+        this.slides.forEach((slide) => observer.observe(slide));
+        this.slides[0].classList.add("visible");
+    }
+
+    setupKeyboard() {
+        document.addEventListener("keydown", (event) => {
+            if (event.target && event.target.getAttribute("contenteditable") === "true") {
+                if (event.key === "Escape") event.target.blur();
+                return;
+            }
+            if (["ArrowRight", "ArrowDown", " ", "PageDown"].includes(event.key)) {
+                event.preventDefault();
+                this.go(Math.min(this.current + 1, this.slides.length - 1));
+            }
+            if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) {
+                event.preventDefault();
+                this.go(Math.max(this.current - 1, 0));
+            }
+            if (event.key === "Home") {
+                event.preventDefault();
+                this.go(0);
+            }
+            if (event.key === "End") {
+                event.preventDefault();
+                this.go(this.slides.length - 1);
+            }
+        });
+    }
+
+    setupTouch() {
+        let startY = 0;
+        document.addEventListener("touchstart", (event) => {
+            startY = event.touches[0].clientY;
+        }, { passive: true });
+        document.addEventListener("touchend", (event) => {
+            const delta = event.changedTouches[0].clientY - startY;
+            if (Math.abs(delta) > 50) {
+                this.go(delta < 0 ? Math.min(this.current + 1, this.slides.length - 1) : Math.max(this.current - 1, 0));
+            }
+        }, { passive: true });
+    }
+
+    update(index) {
+        this.current = index;
+        this.progress.style.width = `${((index + 1) / this.slides.length) * 100}%`;
+        Array.from(this.navDots.children).forEach((dot, dotIndex) => {
+            dot.classList.toggle("active", dotIndex === index);
+        });
+    }
+
+    go(index) {
+        if (index < 0 || index >= this.slides.length) return;
+        this.slides[index].scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+class InlineEditor {
+    constructor() {
+        this.active = false;
+        this.key = "deepflow-dashboard-promo-deck-edits-v1";
+        this.button = document.getElementById("editToggle");
+        this.editables = Array.from(document.querySelectorAll('[data-editable="true"]'));
+        this.restore();
+        this.setup();
+    }
+
+    setup() {
+        this.button.addEventListener("click", () => this.toggle());
+        document.addEventListener("keydown", (event) => {
+            if ((event.key === "e" || event.key === "E") && !event.ctrlKey && !event.metaKey && event.target.getAttribute("contenteditable") !== "true") {
+                event.preventDefault();
+                this.toggle();
+            }
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+                event.preventDefault();
+                this.exportFile();
+            }
+        });
+        document.addEventListener("input", (event) => {
+            if (this.active && event.target.getAttribute("contenteditable") === "true") this.persist();
+        });
+    }
+
+    toggle() {
+        this.active = !this.active;
+        document.body.classList.toggle("editing", this.active);
+        this.button.classList.toggle("active", this.active);
+        this.editables.forEach((el) => el.setAttribute("contenteditable", this.active ? "true" : "false"));
+    }
+
+    persist() {
+        const edits = {};
+        this.editables.forEach((el, index) => {
+            edits[index] = el.innerHTML;
+        });
+        try {
+            localStorage.setItem(this.key, JSON.stringify(edits));
+        } catch (error) {
+            console.warn("DeepFlow deck save failed:", error);
+        }
+    }
+
+    restore() {
+        try {
+            const raw = localStorage.getItem(this.key);
+            if (!raw) return;
+            const edits = JSON.parse(raw);
+            Object.keys(edits).forEach((index) => {
+                if (this.editables[index]) this.editables[index].innerHTML = edits[index];
+            });
+        } catch (error) {
+            console.warn("DeepFlow deck restore failed:", error);
+        }
+    }
+
+    exportFile() {
+        const wasActive = this.active;
+        if (wasActive) this.toggle();
+        const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "deepflow-dashboard-promotion-edited.html";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        if (wasActive) this.toggle();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    new DeepFlowDeck();
+    new InlineEditor();
+});
+</script>
+</body>
+</html>
